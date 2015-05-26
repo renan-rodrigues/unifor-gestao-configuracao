@@ -1,5 +1,6 @@
 /*
 * Criação de um novo arquivo java.
+Modificação em BRANCH GRUPO A - F. Guerreiro
 */
 public class Gestao{
 
