@@ -1,0 +1,45 @@
+/*
+* Criação de um novo arquivo java.
+<<<<<<< HEAD
+  Modificação - Ass: Guerreiro
+=======
+Modificação em BRANCH GRUPO A - F. Guerreiro
+>>>>>>> 88882e69d3d00dc808de544e12bcd42739b367fd
+*/
+public class Gestao{
+
+  private String nomeRepositorio;
+  private String nomeUsuario;
+  private String senhaUsuario;
+  
+  //TODO Construtor
+public Gestao(){
+  this.super();
+}
+
+ //TODO Generate Getters and Setters
+private String getNomeRepositorio(){
+  return this.nomeRepositorio;
+}
+
+private void setNomeRepositorio(String nomeRepositorio){
+  this.nomeRepositorio = nomeRepositorio;
+}
+
+private String getNomeUsuario(){
+  return this.nomeUsuario;
+}
+
+private void setNomeUsuario(String nomeUsuario){
+  this.nomeUsuario = nomeUsuario;
+}
+
+private String getSenhaUsuario(){
+  return this.senhaUsuario;
+}
+
+private void setSenhaUsuario(String senhaUsuario){
+  this.senhaUsuario = senhaUsuario;
+}
+
+
