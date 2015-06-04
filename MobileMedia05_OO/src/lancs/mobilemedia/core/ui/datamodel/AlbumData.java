@@ -3,14 +3,11 @@
  */
 package lancs.mobilemedia.core.ui.datamodel;
 
-import java.util.Hashtable;
-
 import javax.microedition.lcdui.Image;
 
 import lancs.mobilemedia.lib.exceptions.ImageNotFoundException;
 import lancs.mobilemedia.lib.exceptions.InvalidImageDataException;
 import lancs.mobilemedia.lib.exceptions.InvalidPhotoAlbumNameException;
-import lancs.mobilemedia.lib.exceptions.NullAlbumDataReference;
 import lancs.mobilemedia.lib.exceptions.PersistenceMechanismException;
 import lancs.mobilemedia.lib.exceptions.UnavailablePhotoAlbumException;
 
@@ -26,41 +23,25 @@ import lancs.mobilemedia.lib.exceptions.UnavailablePhotoAlbumException;
  * This uses the ImageAccessor class to retrieve the image data from the
  * recordstore (and eventually file system etc.)
  */
-public class AlbumData {
+public abstract class AlbumData {
 
-	private ImageAccessor imageAccessor;
-
-	//imageInfo holds image metadata like label, album name and 'foreign key' index to
-	// corresponding RMS entry that stores the actual Image object
-	protected Hashtable imageInfoTable = new Hashtable();
-
-	public boolean existingRecords = false; //If no records exist, try to reset
-
-	/**
-	 *  Constructor. Creates a new instance of ImageAccessor
-	 */
-	public AlbumData() {
-		imageAccessor = new ImageAccessor(this);
-	}
-
+	protected MediaAccessor mediaAccessor;
+	
 	/**
 	 *  Load any photo albums that are currently defined in the record store
 	 */
 	public String[] getAlbumNames() {
-
 		//Shouldn't load all the albums each time
 		//Add a check somewhere in ImageAccessor to see if they've been
 		//loaded into memory already, and avoid the extra work...
 		try {
-			imageAccessor.loadAlbums();
+			mediaAccessor.loadAlbums();
 		} catch (InvalidImageDataException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (PersistenceMechanismException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return imageAccessor.getAlbumNames();
+		return mediaAccessor.getAlbumNames();
 	}
 
 	/**
@@ -69,20 +50,16 @@ public class AlbumData {
 	 * @throws InvalidImageDataException 
 	 * @throws PersistenceMechanismException 
 	 */
-	public ImageData[] getImages(String recordName) throws UnavailablePhotoAlbumException  {
-
-		ImageData[] result;
+	public MediaData[] getMedias(String recordName) throws UnavailablePhotoAlbumException  {
+		MediaData[] result;
 		try {
-			result = imageAccessor.loadImageDataFromRMS(recordName);
+			result = mediaAccessor.loadMediaDataFromRMS(recordName);
 		} catch (PersistenceMechanismException e) {
 			throw new UnavailablePhotoAlbumException(e);
-			
 		} catch (InvalidImageDataException e) {
 			throw new UnavailablePhotoAlbumException(e);
 		}
-
 		return result;
-
 	}
 
 	/**
@@ -91,53 +68,62 @@ public class AlbumData {
 	 * @throws PersistenceMechanismException 
 	 * @throws InvalidPhotoAlbumNameException 
 	 */
-	public void createNewPhotoAlbum(String albumName) throws PersistenceMechanismException, InvalidPhotoAlbumNameException {
-		imageAccessor.createNewPhotoAlbum(albumName);
+	public void createNewAlbum(String albumName) throws PersistenceMechanismException, InvalidPhotoAlbumNameException {
+		mediaAccessor.createNewAlbum(albumName);
 	}
 	
-	public void deletePhotoAlbum(String albumName) throws PersistenceMechanismException{
-		imageAccessor.deletePhotoAlbum(albumName);
+	/**
+	 * @param albumName
+	 * @throws PersistenceMechanismException
+	 */
+	public void deleteAlbum(String albumName) throws PersistenceMechanismException{
+		mediaAccessor.deleteAlbum(albumName);
 	}
 
 	/**
-	 *  Get a particular image (by name) from a photo album. The album name corresponds
-	 *  to a record store.
-	 * @throws ImageNotFoundException 
-	 * @throws PersistenceMechanismException 
+	 * @param label
+	 * @param path
+	 * @param album
+	 * @throws InvalidImageDataException
+	 * @throws PersistenceMechanismException
 	 */
-	public Image getImageFromRecordStore(String recordStore, String imageName) throws ImageNotFoundException, PersistenceMechanismException {
-
-		ImageData imageInfo = null;
-		try {
-			imageInfo = imageAccessor.getImageInfo(imageName);
-		} catch (NullAlbumDataReference e) {
-			imageAccessor = new ImageAccessor(this);
-		}
-		//Find the record ID and store name of the image to retrieve
-		int imageId = imageInfo.getForeignRecordId();
-		String album = imageInfo.getParentAlbumName();
-		//Now, load the image (on demand) from RMS and cache it in the hashtable
-		Image imageRec = imageAccessor.loadSingleImageFromRMS(album, imageName, imageId); //rs.getRecord(recordId);
-		return imageRec;
-
+	public void addNewMediaToAlbum(String label, String path, String album) throws InvalidImageDataException, PersistenceMechanismException{
+		mediaAccessor.addMediaData(label, path, album);
 	}
-	public void addNewPhotoToAlbum(String label, String path, String album) throws InvalidImageDataException, PersistenceMechanismException{
-		imageAccessor.addImageData(label, path, album);
+	
+	// #ifdef includeCopyPhoto
+	/**
+	 * @param mediaData
+	 * @param albumname
+	 * @throws InvalidImageDataException
+	 * @throws PersistenceMechanismException
+	 */
+	public void addMediaData(MediaData mediaData, String albumname) throws InvalidImageDataException, PersistenceMechanismException {
+		mediaAccessor.addMediaData(mediaData, albumname);
 	}
+	// #endif
 
+	// #ifdef includeSmsFeature
+	/* [NC] Added in scenario 06 */
+	/**
+	 * @param photoname
+	 * @param imgdata
+	 * @param albumname
+	 * @throws InvalidImageDataException
+	 * @throws PersistenceMechanismException
+	 */
+	public void addImageData(String photoname, Image imgdata, String albumname) throws InvalidImageDataException, PersistenceMechanismException {
+		if (mediaAccessor instanceof ImageMediaAccessor) ((ImageMediaAccessor)mediaAccessor).addImageData(photoname, imgdata, albumname);
+	}
+	// #endif
+	
 	/**
 	 *  Delete a photo from the photo album. This permanently deletes the image from the record store
 	 * @throws ImageNotFoundException 
 	 * @throws PersistenceMechanismException 
 	 */
-	public void deleteImage(String imageName, String storeName) throws PersistenceMechanismException, ImageNotFoundException {
-		try {
-			imageAccessor.deleteSingleImageFromRMS(imageName, storeName);
-		}
-		catch (NullAlbumDataReference e) {
-			imageAccessor = new ImageAccessor(this);
-			e.printStackTrace();
-		} 
+	public void deleteMedia(String mediaName, String storeName) throws PersistenceMechanismException, ImageNotFoundException {
+			mediaAccessor.deleteSingleMediaFromRMS(mediaName, storeName);
 	}
 	
 	/**
@@ -146,79 +132,52 @@ public class AlbumData {
 	 * @throws PersistenceMechanismException 
 	 * @throws InvalidImageDataException 
 	 */
-	public void resetImageData() throws PersistenceMechanismException {
+	public void resetMediaData() throws PersistenceMechanismException {
 		try {
-			imageAccessor.resetImageRecordStore();
+			mediaAccessor.resetRecordStore();
 		} catch (InvalidImageDataException e) {
 			e.printStackTrace();
 		}
 	}
 
 	/**
-	 * Get the hashtable that stores the image metadata in memory.
-	 * @return Returns the imageInfoTable.
-	 */
-	public Hashtable getImageInfoTable() {
-		return imageInfoTable;
-	}
-
-	/**
-	 * Update the hashtable that stores the image metadata in memory
-	 * @param imageInfoTable
-	 *            The imageInfoTable to set.
-	 */
-	public void setImageInfoTable(Hashtable imageInfoTable) {
-		this.imageInfoTable = imageInfoTable;
-	}
-
-	/**
 	 * [EF] Added in order to have access to ImageData
-	 * @param imageAccessor
+	 * @param imageName
+	 * @return
+	 * @throws ImageNotFoundException
 	 */
-	public void setImageAccessor(ImageAccessor imageAccessor) {
-		this.imageAccessor = imageAccessor;
+	public MediaData getMediaInfo(String imageName) throws ImageNotFoundException {
+		return mediaAccessor.getMediaInfo(imageName);
 	}
 
 	/**
-	 * [CD] Add in order to have access to ImageData
+	 * @param recordName
 	 * @return
+	 * @throws PersistenceMechanismException
+	 * @throws InvalidImageDataException
 	 */
-	
-	public ImageData getImageInfo(String name)throws ImageNotFoundException, NullAlbumDataReference{
-		return imageAccessor.getImageInfo(name);
+	public MediaData[] loadMediaDataFromRMS(String recordName) throws PersistenceMechanismException, InvalidImageDataException {
+		return mediaAccessor.loadMediaDataFromRMS(recordName);
 	}
 	
 	/**
-	 * [CD] Add in order to have access to ImageData
-	 */
-		
-	public void updateImageInfo(ImageData oldData,ImageData newData) throws InvalidImageDataException, PersistenceMechanismException{
-			imageAccessor.updateImageInfo(oldData, newData);
-	}
-	
-//	 #ifdef includeCopyPhoto
-	/**
-	 * @param photoname
-	 * @param img
-	 * @param albumname
+	 * @param oldData
+	 * @param newData
+	 * @return
 	 * @throws InvalidImageDataException
 	 * @throws PersistenceMechanismException
 	 */
-	public void addImageData(String photoname, Image img, String albumname) throws InvalidImageDataException, PersistenceMechanismException {
-		imageAccessor.addImageData(photoname,img,albumname);
+	public boolean updateMediaInfo(MediaData oldData, MediaData newData) throws InvalidImageDataException, PersistenceMechanismException {
+		return mediaAccessor.updateMediaInfo(oldData, newData);
 	}
-	
+
 	/**
-	 * @param photoname
-	 * @param imgdata
-	 * @param albumname
-	 * @throws InvalidImageDataException
+	 * @param recordName
+	 * @param recordId
+	 * @return
 	 * @throws PersistenceMechanismException
 	 */
-	
-	public void addImageData(String photoname, ImageData imageData, String albumname) throws InvalidImageDataException, PersistenceMechanismException{
-		imageAccessor.addImageData(photoname, imageData, albumname);
+	public byte[] loadMediaBytesFromRMS(String recordName, int recordId) throws PersistenceMechanismException {
+		return mediaAccessor.loadMediaBytesFromRMS(recordName, recordId);
 	}
-	
-	//	 #endif
 }

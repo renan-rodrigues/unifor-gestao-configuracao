@@ -36,6 +36,7 @@ public class SmsReceiverThread implements Runnable { //extends BaseThread {
 	 */
 	public SmsReceiverThread(MainUIMidlet midlet, AlbumData albumData, AlbumListScreen albumListScreen, SmsReceiverController controller) {
 		this.controller = controller;
+		//smsPort = getAppProperty("SMS-Port");
 		smsPort = "1000"; //getAppProperty("SMS-Port");
 	}
 
@@ -48,15 +49,14 @@ public class SmsReceiverThread implements Runnable { //extends BaseThread {
 	/** Message reading thread. */
 	public void run() {
 		SmsMessaging smsMessenger = new SmsMessaging();
-		while(true){
+		while (true) {
 			smsMessenger.setSmsReceivePort(smsPort);
 			byte[] receivedData = null;
 			try {
 				receivedData = smsMessenger.receiveImage();
 			} catch (InterruptedIOException e) {
 				Alert alert = new Alert("Error Incoming Photo");
-				alert.setString("" +
-						"You have just received a bad fragmentated photo which was not possible to recovery.");
+				alert.setString("" + "You have just received a bad fragmentated photo which was not possible to recovery.");
 				alert.addCommand(errorNotice);
 				System.out.println("Error interreput");
 				alert.setCommandListener(controller);
@@ -65,8 +65,7 @@ public class SmsReceiverThread implements Runnable { //extends BaseThread {
 				continue;
 			} catch (IOException e) {
 				Alert alert = new Alert("Error Incoming Photo");
-				alert.setString("" +
-						"You have just received a bad fragmentated photo which was not possible to recovery.");
+				alert.setString("" + "You have just received a bad fragmentated photo which was not possible to recovery.");
 				alert.addCommand(errorNotice);
 				System.out.println("Bad fragmentation");
 				alert.setCommandListener(controller);

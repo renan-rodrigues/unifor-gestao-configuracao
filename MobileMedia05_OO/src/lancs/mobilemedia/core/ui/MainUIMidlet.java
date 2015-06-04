@@ -1,19 +1,33 @@
 package lancs.mobilemedia.core.ui;
 
+import javax.microedition.lcdui.Display;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
 import lancs.mobilemedia.core.ui.controller.AlbumController;
 import lancs.mobilemedia.core.ui.controller.BaseController;
-import lancs.mobilemedia.core.ui.controller.PhotoListController;
+import lancs.mobilemedia.core.ui.controller.MediaListController;
+import lancs.mobilemedia.core.ui.controller.ScreenSingleton;
 import lancs.mobilemedia.core.ui.datamodel.AlbumData;
+//#ifdef includePhotoAlbum
+//[NC] Added in the scenario 07
+import lancs.mobilemedia.core.ui.datamodel.ImageAlbumData;
+//#endif
+//#ifdef includeMusic
+//[NC] Added in the scenario 07
+import lancs.mobilemedia.core.ui.datamodel.MusicAlbumData;
+//#endif
 import lancs.mobilemedia.core.ui.screens.AlbumListScreen;
+//#if includeMusic && includePhotoAlbum
+//[NC] Added in the scenario 07
+import lancs.mobilemedia.core.ui.controller.SelectMediaController;
+import lancs.mobilemedia.core.ui.screens.SelectTypeOfMedia;
+//#endif
+
 //#ifdef includeSmsFeature
 import lancs.mobilemedia.sms.SmsReceiverController;
 import lancs.mobilemedia.sms.SmsReceiverThread;
 //#endif
-
-
 
 //Following are pre-processor statements to include the required
 //classes for device specific features. They must be commented out
@@ -37,11 +51,27 @@ import lancs.mobilemedia.sms.SmsReceiverThread;
  * */
 public class MainUIMidlet extends MIDlet {
 
-	//(m v C) Controller 
-	private BaseController rootController;
+	//(m v C) Controller
+	// #ifdef includePhotoAlbum
+	// [NC] Added in the scenario 07
+	private BaseController imageRootController;
+	//#endif
 
+	//	#ifdef includeMusic
+	// [NC] Added in the scenario 07
+	private BaseController musicRootController;
+	//#endif
+	
 	//Model (M v c)
-	private AlbumData model;
+	// #ifdef includePhotoAlbum
+	// [NC] Added in the scenario 07
+	private AlbumData imageModel;
+	//#endif
+	
+	//	#ifdef includeMusic
+	// [NC] Added in the scenario 07
+	private AlbumData musicModel;
+	//#endif
 
 	/**
 	 * Constructor -
@@ -55,32 +85,73 @@ public class MainUIMidlet extends MIDlet {
 	 * initialize them as necessary
 	 */
 	public void startApp() throws MIDletStateChangeException {
-		model = new AlbumData();
+		
+		// #ifdef includePhotoAlbum
+		// [NC] Added in the scenario 07
+		imageModel = new ImageAlbumData();
+		//#endif
+		
+		//	#ifdef includeMusic
+		// [NC] Added in the scenario 07
+		musicModel = new MusicAlbumData();
+		//#endif
+		
+		// #ifdef includePhotoAlbum
+		// [NC] Added in the scenario 07
 		AlbumListScreen album = new AlbumListScreen();
-		rootController = new BaseController(this, model, album);
+		imageRootController = new BaseController(this, imageModel, album);
 		
 		// [EF] Add in scenario 04: initialize sub-controllers
-		PhotoListController photoListController = new PhotoListController(this, model, album);
-		photoListController.setNextController(rootController);
+		MediaListController photoListController = new MediaListController(this, imageModel, album);
+		photoListController.setNextController(imageRootController);
 		
-		AlbumController albumController = new AlbumController(this, model, album);
+		AlbumController albumController = new AlbumController(this, imageModel, album);
 		albumController.setNextController(photoListController);
 		album.setCommandListener(albumController);
+		//#endif
 		
 		
-
+		// #ifdef includeMusic
+		// [NC] Added in the scenario 07
+		AlbumListScreen albumMusic = new AlbumListScreen();
+		musicRootController = new BaseController(this, musicModel, albumMusic);
+		
+		MediaListController musicListController = new MediaListController(this, musicModel, albumMusic);
+		musicListController.setNextController(musicRootController);
+		
+		AlbumController albumMusicController = new AlbumController(this, musicModel, albumMusic);
+		albumMusicController.setNextController(musicListController);
+		albumMusic.setCommandListener(albumMusicController);
+		//#endif
+		
+	
+	
+		
 		//#ifdef includeSmsFeature
 		/* [NC] Added in scenario 06 */
-		SmsReceiverController controller = new SmsReceiverController(this, model, album);
+		SmsReceiverController controller = new SmsReceiverController(this, imageModel, album);
 		controller.setNextController(albumController);
-		SmsReceiverThread smsR = new SmsReceiverThread(this, model, album, controller);
+		SmsReceiverThread smsR = new SmsReceiverThread(this, imageModel, album, controller);
 		System.out.println("SmsController::Starting SMSReceiver Thread");
 		new Thread(smsR).start();
 		//#endif
-
 		
-		//Only the first (last?) controller needs to be initialized (?)
-		rootController.init(model);
+		// #if includeMusic && includePhotoAlbum
+		// [NC] Added in the scenario 07
+		SelectMediaController selectcontroller = new SelectMediaController(this, imageModel, musicModel, album,imageRootController,musicRootController);
+		selectcontroller.setNextController(imageRootController);
+		
+		SelectTypeOfMedia mainscreen = new SelectTypeOfMedia();
+		mainscreen.initMenu();
+		mainscreen.setCommandListener(selectcontroller);
+		Display.getDisplay(this).setCurrent(mainscreen);
+		ScreenSingleton.getInstance().setMainMenu(mainscreen);
+		//#elif includePhotoAlbum
+		imageRootController.init(imageModel);
+		//#elif includeMusic
+		musicRootController.init(musicModel);
+		//#endif
+
 	}
 
 	/**

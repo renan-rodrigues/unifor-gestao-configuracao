@@ -1,9 +1,8 @@
-/ImageNotFoundException.java/1.1/Fri May 23 00:01:15 2008//
-/ImagePathNotValidException.java/1.1/Fri May 23 00:01:16 2008//
-/InvalidArrayFormatException.java/1.1/Fri May 23 00:01:13 2008//
-/InvalidImageDataException.java/1.1/Fri May 23 00:01:15 2008//
-/InvalidImageFormatException.java/1.1/Fri May 23 00:01:14 2008//
-/InvalidPhotoAlbumNameException.java/1.1/Fri May 23 00:01:16 2008//
-/NullAlbumDataReference.java/1.1/Fri May 23 00:01:16 2008//
-/PersistenceMechanismException.java/1.1/Fri May 23 00:01:11 2008//
-/UnavailablePhotoAlbumException.java/1.1/Fri May 23 00:01:14 2008//
+/ImageNotFoundException.java/1.1/Thu Jul 17 18:17:35 2008//
+/ImagePathNotValidException.java/1.1/Thu Jul 17 18:17:35 2008//
+/InvalidArrayFormatException.java/1.1/Thu Jul 17 18:17:33 2008//
+/InvalidImageDataException.java/1.1/Thu Jul 17 18:17:31 2008//
+/InvalidImageFormatException.java/1.1/Thu Jul 17 18:17:29 2008//
+/InvalidPhotoAlbumNameException.java/1.1/Thu Jul 17 18:17:32 2008//
+/PersistenceMechanismException.java/1.1/Thu Jul 17 18:17:30 2008//
+/UnavailablePhotoAlbumException.java/1.1/Thu Jul 17 18:17:30 2008//

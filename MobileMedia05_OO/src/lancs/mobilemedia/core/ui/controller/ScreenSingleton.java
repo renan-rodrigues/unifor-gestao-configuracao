@@ -8,6 +8,10 @@
  */
 package lancs.mobilemedia.core.ui.controller;
 
+//#if includeMusic && includePhotoAlbum
+//[NC] Added in the scenario 07
+import lancs.mobilemedia.core.ui.screens.SelectTypeOfMedia;
+//#endif
 
 
 /**
@@ -26,6 +30,18 @@ public class ScreenSingleton {
 	//Ie. name of the currently active J2ME record store
 	private String currentStoreName = "My Photo Album";
 	
+	// #if includeMusic && includePhotoAlbum
+	// [NC] Added in the scenario 07
+	private SelectTypeOfMedia mainscreen;
+	
+	public SelectTypeOfMedia getMainMenu(){
+		return mainscreen;
+	}
+	
+	public void setMainMenu(SelectTypeOfMedia screen){
+		mainscreen = screen;
+	}
+	//#endif
 	
 	private ScreenSingleton() {
 	}
