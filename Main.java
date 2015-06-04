@@ -1,6 +1,6 @@
 /*
 * Criação de um novo arquivo java.
-  Modificação - Ass: Guerreiro
+  Modificação p/ Prova - Ass: Guerreiro
 */
 public class Gestao{
 
