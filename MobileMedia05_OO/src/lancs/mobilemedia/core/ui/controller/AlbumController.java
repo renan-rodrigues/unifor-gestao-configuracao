@@ -35,7 +35,7 @@ public class AlbumController extends AbstractController {
 	}
 	
 	/* (non-Javadoc)
-	 * @see ubc.midp.mobilephoto.core.ui.controller.ControllerInterface#handleCommand(javax.microedition.lcdui.Command, javax.microedition.lcdui.Displayable)
+	 * @see ubc.midp.MobileMedia.core.ui.controller.ControllerInterface#handleCommand(javax.microedition.lcdui.Command, javax.microedition.lcdui.Displayable)
 	 */
 	public boolean handleCommand(Command command) {
 		String label = command.getLabel();
@@ -43,11 +43,11 @@ public class AlbumController extends AbstractController {
 		
       	if (label.equals("Reset")) {
 			System.out.println("<* BaseController.handleCommand() *> Reset Photo Album");			
-		    resetImageData();
+		    resetMediaData();
 		    ScreenSingleton.getInstance().setCurrentScreenName(Constants.ALBUMLIST_SCREEN);
 			return true;
 		/** Case: Create PhotoAlbum **/
-		}else if (label.equals("New Photo Album")) {
+		}else if (label.equals("New Album")) {
 			System.out.println("Create new Photo Album here");			
 			ScreenSingleton.getInstance().setCurrentScreenName(Constants.NEWALBUM_SCREEN);
 			NewLabelScreen canv = new NewLabelScreen("Add new Photo Album", NewLabelScreen.NEW_ALBUM);
@@ -75,7 +75,7 @@ public class AlbumController extends AbstractController {
 		 *  Case: Yes delete Photo Album  **/
 		}else if (label.equals("Yes - Delete")) {
 			try {
-				getAlbumData().deletePhotoAlbum(ScreenSingleton.getInstance().getCurrentStoreName());
+				getAlbumData().deleteAlbum(ScreenSingleton.getInstance().getCurrentStoreName());
 			} catch (PersistenceMechanismException e) {
 				Alert alert = new Alert( "Error", "The mobile database can not delete this photo album", null, AlertType.ERROR);
 		        Display.getDisplay(midlet).setCurrent(alert, Display.getDisplay(midlet).getCurrent());
@@ -96,7 +96,7 @@ public class AlbumController extends AbstractController {
 				if (getCurrentScreen() instanceof NewLabelScreen) {
 					NewLabelScreen currentScreen = (NewLabelScreen)getCurrentScreen();
 					if (currentScreen.getFormType() == NewLabelScreen.NEW_ALBUM)
-						getAlbumData().createNewPhotoAlbum(currentScreen.getLabelName());
+						getAlbumData().createNewAlbum(currentScreen.getLabelName());
 					else if (currentScreen.getFormType() == NewLabelScreen.LABEL_PHOTO) {
 						
 					}
@@ -127,9 +127,9 @@ public class AlbumController extends AbstractController {
 	 * many images, you can reset it, which clears the record stores and
 	 * re-creates them with the default images bundled with the application 
 	 */
-	private void resetImageData() {
+	private void resetMediaData() {
         try {
-        	getAlbumData().resetImageData();
+        	getAlbumData().resetMediaData();
 		} catch (PersistenceMechanismException e) {
 			Alert alert = null;
 			if (e.getCause() instanceof  RecordStoreFullException)
@@ -158,7 +158,8 @@ public class AlbumController extends AbstractController {
 
     private void goToPreviousScreen() {
 	    System.out.println("<* AlbumController.goToPreviousScreen() *>");
-		getAlbumListScreen().repaintListAlbum(getAlbumData().getAlbumNames());
+	 // [NC] Changed in the scenario 07: just the first line below to support generic AbstractController
+	    ((AlbumListScreen) getAlbumListScreen()).repaintListAlbum(getAlbumData().getAlbumNames());
 		setCurrentScreen( getAlbumListScreen() );
 		ScreenSingleton.getInstance().setCurrentScreenName(Constants.ALBUMLIST_SCREEN);
     }

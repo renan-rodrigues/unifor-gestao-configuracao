@@ -6,7 +6,6 @@ package lancs.mobilemedia.core.ui.screens;
 
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.Command;
-import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
 
 
@@ -15,14 +14,17 @@ import javax.microedition.lcdui.List;
  *
  * This screen displays a list of photo albums available to select.
  * A user can also create a new album on this screen.
- * TODO: Add delete photo album option
- * 
  */
 public class AlbumListScreen extends List {
-
+	
+	//#if includeMusic && includePhotoAlbum
+	//[NC] Added in the scenario 07
+	public static final Command exitCommand = new Command("Back", Command.STOP, 2);
+	//#elif includePhotoAlbum || includeMusic
 	public static final Command exitCommand = new Command("Exit", Command.STOP, 2);
+	//#endif
 	public static final Command selectCommand = new Command("Select", Command.ITEM, 1);
-	public static final Command createAlbumCommand = new Command("New Photo Album", Command.ITEM, 1);
+	public static final Command createAlbumCommand = new Command("New Album", Command.ITEM, 1);
 	public static final Command deleteAlbumCommand = new Command("Delete Album", Command.ITEM, 1);
 	public static final Command resetCommand = new Command("Reset", Command.ITEM, 1);
 	
@@ -34,33 +36,14 @@ public class AlbumListScreen extends List {
 		super("Select Album", Choice.IMPLICIT);
 	}
 
-
-	/**
-	 * Constructor
-	 * @param arg0
-	 * @param arg1
-	 */
-	public AlbumListScreen(String arg0, int arg1) {
-		super(arg0, arg1);
-	}
-
-	/**
-	 * Constructor
-	 * @param arg0
-	 * @param arg1
-	 * @param arg2
-	 * @param arg3
-	 */
-	public AlbumListScreen(String arg0, int arg1, String[] arg2, Image[] arg3) {
-		super(arg0, arg1, arg2, arg3);
-	}
-	
 	/**
 	 * Initialize the menu items for this screen
 	 * 
 	 */
 	public void initMenu() {
+		//#if includeMusic || includePhotoAlbum
 		this.addCommand(exitCommand);
+		//#endif
 		this.addCommand(selectCommand);
 		this.addCommand(createAlbumCommand);
 		this.addCommand(deleteAlbumCommand);

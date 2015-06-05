@@ -14,31 +14,28 @@ import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.Display;
-
+import javax.microedition.lcdui.Image;
 import javax.microedition.rms.RecordStoreFullException;
 
 import lancs.mobilemedia.core.ui.MainUIMidlet;
 import lancs.mobilemedia.core.ui.datamodel.AlbumData;
-import lancs.mobilemedia.core.ui.datamodel.ImageData;
-import lancs.mobilemedia.core.ui.screens.AddPhotoToAlbum;
+import lancs.mobilemedia.core.ui.datamodel.MediaData;
+import lancs.mobilemedia.core.ui.screens.AddMediaToAlbum;
 import lancs.mobilemedia.core.ui.screens.AlbumListScreen;
+//#ifdef includePhotoAlbum
+//[NC] Added in the scenario 07
 import lancs.mobilemedia.core.ui.screens.PhotoViewScreen;
+//#endif
 import lancs.mobilemedia.core.util.Constants;
 import lancs.mobilemedia.lib.exceptions.ImageNotFoundException;
 import lancs.mobilemedia.lib.exceptions.ImagePathNotValidException;
 import lancs.mobilemedia.lib.exceptions.InvalidImageDataException;
-import lancs.mobilemedia.lib.exceptions.NullAlbumDataReference;
 import lancs.mobilemedia.lib.exceptions.PersistenceMechanismException;
 
-//#ifdef includeSmsFeature
-/* [NC] Added in scenario 06 */
-import javax.microedition.lcdui.Image;
-//#endif
 /**
  * @author Eduardo Figueiredo
  * [EF] Added in Scenario 05
  */
-
 public class PhotoViewController extends AbstractController {
 
 	String imageName = "";
@@ -56,7 +53,7 @@ public class PhotoViewController extends AbstractController {
 	}
 
 	/* (non-Javadoc)
-	 * @see ubc.midp.mobilephoto.core.ui.controller.ControllerInterface#handleCommand(javax.microedition.lcdui.Command, javax.microedition.lcdui.Displayable)
+	 * @see ubc.midp.MobileMedia.core.ui.controller.ControllerInterface#handleCommand(javax.microedition.lcdui.Command, javax.microedition.lcdui.Displayable)
 	 */
 	public boolean handleCommand(Command c) {
 		String label = c.getLabel();
@@ -64,9 +61,9 @@ public class PhotoViewController extends AbstractController {
 
 		/** Case: Copy photo to a different album */
 		if (label.equals("Copy")) {
-			AddPhotoToAlbum copyPhotoToAlbum = new AddPhotoToAlbum("Copy Photo to Album");
-			copyPhotoToAlbum.setPhotoName(imageName);
-			copyPhotoToAlbum.setLabePhotoPath("Copy to Album:");
+			AddMediaToAlbum copyPhotoToAlbum = new AddMediaToAlbum("Copy Photo to Album");
+			copyPhotoToAlbum.setItemName(imageName);
+			copyPhotoToAlbum.setLabePath("Copy to Album:");
 			copyPhotoToAlbum.setCommandListener(this);
 
 			// #ifdef includeSmsFeature
@@ -79,34 +76,27 @@ public class PhotoViewController extends AbstractController {
 			
 			return true;
 		}
-		
+
 		/** Case: Save a copy in a new album */
-		else if (label.equals("Save Photo")) {
+		else if (label.equals("Save Item")) {
 			try {
-				ImageData imageData = null;
+				MediaData imageData = null;	
 				// #ifdef includeSmsFeature
 				/* [NC] Added in scenario 06 */
-				Image img = ((AddPhotoToAlbum)this.getCurrentScreen()).getImage();
+				Image img = ((AddMediaToAlbum)this.getCurrentScreen()).getImage();
 				
 				if (img == null)
 				//#endif
 				{
 					try {
-						imageData = getAlbumData().getImageInfo(imageName);
+						imageData = getAlbumData().getMediaInfo(imageName);
 					} catch (ImageNotFoundException e) {
 						Alert alert = new Alert("Error", "The selected photo was not found in the mobile device", null, AlertType.ERROR);
 						Display.getDisplay(midlet).setCurrent(alert, Display.getDisplay(midlet).getCurrent());
-					} catch (NullAlbumDataReference e) {
-						this.setAlbumData( new AlbumData() );
-						Alert alert = new Alert( "Error", "The operation is not available. Try again later !", null, AlertType.ERROR);
-						Display.getDisplay(midlet).setCurrent(alert, Display.getDisplay(midlet).getCurrent());
 					}
 				}
-				
-				
-				String photoname = ((AddPhotoToAlbum) getCurrentScreen()).getPhotoName();
-				String albumname = ((AddPhotoToAlbum) getCurrentScreen()).getPath();
-
+				String photoname = ((AddMediaToAlbum) getCurrentScreen()).getItemName();
+				String albumname = ((AddMediaToAlbum) getCurrentScreen()).getPath();
 				
 				// #ifdef includeSmsFeature
 				/* [NC] Added in scenario 06 */
@@ -121,7 +111,7 @@ public class PhotoViewController extends AbstractController {
 					
 				// #if includeCopyPhoto 
 				/* [NC] Added in scenario 06 */
-				getAlbumData().addImageData(photoname, imageData, albumname); 
+					getAlbumData().addMediaData(imageData, albumname); 
 				// #endif 
 				
 			
@@ -145,12 +135,14 @@ public class PhotoViewController extends AbstractController {
 			}
 			//((PhotoController)this.getNextController()).showImageList(ScreenSingleton.getInstance().getCurrentStoreName(), false, false);
 		    //ScreenSingleton.getInstance().setCurrentScreenName(Constants.IMAGELIST_SCREEN);
-		  	getAlbumListScreen().repaintListAlbum(getAlbumData().getAlbumNames());
+			// [NC] Changed in the scenario 07: just the first line below to support generic AbstractController
+			((AlbumListScreen) getAlbumListScreen()).repaintListAlbum(getAlbumData().getAlbumNames());
 			setCurrentScreen( getAlbumListScreen() );
 			ScreenSingleton.getInstance().setCurrentScreenName(Constants.ALBUMLIST_SCREEN);
 			return true;
 		}else if ((label.equals("Cancel")) || (label.equals("Back"))){
-			getAlbumListScreen().repaintListAlbum(getAlbumData().getAlbumNames());
+			// [NC] Changed in the scenario 07: just the first line below to support generic AbstractController
+			((AlbumListScreen) getAlbumListScreen()).repaintListAlbum(getAlbumData().getAlbumNames());
 			setCurrentScreen( getAlbumListScreen() );
 			ScreenSingleton.getInstance().setCurrentScreenName(Constants.ALBUMLIST_SCREEN);
 			return true;

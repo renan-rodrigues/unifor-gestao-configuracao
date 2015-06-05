@@ -2,7 +2,7 @@
  * Created on 31-Mar-2005
  *
  */
-// #ifdef includeSmsFeature
+// #if includeSmsFeature
 package lancs.mobilemedia.core.comms;
 
 import java.io.IOException;

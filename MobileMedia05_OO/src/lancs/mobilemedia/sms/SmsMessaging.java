@@ -1,9 +1,6 @@
-// #ifdef includeSmsFeature
+// #if includeSmsFeature
 /*
  * Created on 6-Apr-2005
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 package lancs.mobilemedia.sms;
 
@@ -54,7 +51,7 @@ public class SmsMessaging extends BaseMessaging {
 	}
 
 	/* (non-Javadoc)
-	 * @see ubc.midp.mobilephoto.core.comms.BaseMessaging#sendImage(byte[])
+	 * @see ubc.midp.MobileMedia.core.comms.BaseMessaging#sendImage(byte[])
 	 */
 	public boolean sendImage(byte[] imageData) {
 		boolean success = true;
@@ -97,16 +94,16 @@ public class SmsMessaging extends BaseMessaging {
 		return success;
 	}
 
-	/* (non-Javadoc)
-	 * @see ubc.midp.mobilephoto.core.comms.BaseMessaging#receiveImage()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ubc.midp.MobileMedia.core.comms.BaseMessaging#receiveImage()
 	 */
 	public byte[] receiveImage() throws InterruptedIOException, IOException {
-		
-	    System.out.println("SmsMessaging::receiveImage() - start");
 		byte[] receivedData = null;
 		String smsConnection = smsProtocolPrefix + ":" + smsReceivePort;
 		String senderAddress;
-		
+
 		if (smsConn == null) {
 			try {
 				smsConn = (MessageConnection) Connector.open(smsConnection);
@@ -119,48 +116,43 @@ public class SmsMessaging extends BaseMessaging {
 		if (connections == null || connections.length == 0) {
 			System.out.println("Waiting for SMS on " + smsConnection + "...");
 		}
-		
+
 		// Check for sms connection
-		    
-		    //TODO: Use MessageListener interface to handle incoming messages,
-		    //instead of blocking on the thread
-		    
-		    //This will block until a message is received
-		    System.out.println("DEBUG 1: before smsConn.receive():"+smsConn);
-			msg = smsConn.receive();
-		    System.out.println("DEBUG 2: after smsConn.receive()");
-			
-			if (msg != null) {
-				senderAddress = msg.getAddress();
-				System.out.println("From: " + senderAddress);
-				
-				//Handle Text Message
-				if (msg instanceof TextMessage) {
-					String incomingMessage = ((TextMessage) msg).getPayloadText();
-					System.out.println("Incoming SMS Message with Payload:" + incomingMessage);
-					
-				//Handle Binary Message
-				} else {
-					System.out.println("Incoming Binary SMS Message...");
-					StringBuffer buf = new StringBuffer();
-					receivedData = ((BinaryMessage) msg).getPayloadData();					
-					System.out.println("SmsMessaging::receiveImage: sender address = " + senderAddress.toString());
-					System.out.println("SmsMessaging::receiveImage: buffer length = " + buf.length() + " contents = " + buf.toString());
-				}
+
+		// TODO: Use MessageListener interface to handle incoming messages,
+		// instead of blocking on the thread
+
+		// This will block until a message is received
+		msg = smsConn.receive();
+
+		if (msg != null) {
+			senderAddress = msg.getAddress();
+			System.out.println("From: " + senderAddress);
+
+			// Handle Text Message
+			if (msg instanceof TextMessage) {
+				String incomingMessage = ((TextMessage) msg).getPayloadText();
+				System.out.println("Incoming SMS Message with Payload:" + incomingMessage);
+
+				// Handle Binary Message
+			} else {
+				System.out.println("Incoming Binary SMS Message...");
+				StringBuffer buf = new StringBuffer();
+				receivedData = ((BinaryMessage) msg).getPayloadData();
+				System.out.println("SmsMessaging::receiveImage: sender address = " + senderAddress.toString());
+				System.out.println("SmsMessaging::receiveImage: buffer length = " + buf.length() + " contents = " + buf.toString());
 			}
-	
-		
-		System.out.println("SmsMessaging::receiveImage() - Finish");
-		
-		//Return success if we reached this far
+		}
+		// Return success if we reached this far
 		return receivedData;
 	}
 
-	/* (non-Javadoc)
-	 * @see ubc.midp.mobilephoto.core.comms.BaseMessaging#cleanUpConnections()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ubc.midp.MobileMedia.core.comms.BaseMessaging#cleanUpConnections()
 	 */
 	public void cleanUpConnections(MessageConnection smsConn) {
-		
 		//Cleanup the connection
 		if (smsConn != null) {
 			try {
@@ -174,7 +166,6 @@ public class SmsMessaging extends BaseMessaging {
 	}
 	
 	public void cleanUpReceiverConnections() {
-		
 		//Cleanup the connection
 		if (smsConn != null) {
 			try {
@@ -187,36 +178,42 @@ public class SmsMessaging extends BaseMessaging {
 		}
 		
 	}
+
 	/**
 	 * @return Returns the destinationPhoneNumber.
 	 */
 	public String getDestinationPhoneNumber() {
 		return destinationPhoneNumber;
 	}
+	
 	/**
 	 * @param destinationPhoneNumber The destinationPhoneNumber to set.
 	 */
 	public void setDestinationPhoneNumber(String destinationPhoneNumber) {
 		this.destinationPhoneNumber = destinationPhoneNumber;
 	}
+	
 	/**
 	 * @return Returns the smsReceivePort.
 	 */
 	public String getSmsReceivePort() {
 		return smsReceivePort;
 	}
+	
 	/**
 	 * @param smsReceivePort The smsReceivePort to set.
 	 */
 	public void setSmsReceivePort(String smsReceivePort) {
 		this.smsReceivePort = smsReceivePort;
 	}
+	
 	/**
 	 * @return Returns the smsSendPort.
 	 */
 	public String getSmsSendPort() {
 		return smsSendPort;
 	}
+	
 	/**
 	 * @param smsSendPort The smsSendPort to set.
 	 */

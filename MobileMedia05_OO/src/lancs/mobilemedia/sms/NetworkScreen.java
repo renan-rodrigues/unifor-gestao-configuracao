@@ -1,4 +1,4 @@
-// #ifdef includeSmsFeature
+// #if includeSmsFeature
 package lancs.mobilemedia.sms;
 
 import javax.microedition.lcdui.Command;
@@ -24,20 +24,18 @@ public class NetworkScreen extends Form {
 	 * @param arg0
 	 */
 	public NetworkScreen(String title) {
-
 		super(title);
 		recPhoneNum.setString("5550001");
 
 		this.append(recPhoneNum);
 		
-		//TODO: Add an OK or confirm button to let the parent midlet know when
+		//Added an OK or confirm button to let the parent midlet know when
 		//it is time to proceed to the next screen...
 		
 		ok = new Command("Send Now", Command.OK, 0);
 		cancel = new Command("Cancel", Command.EXIT, 1);
 		this.addCommand(ok);
 		this.addCommand(cancel);
-		
 	}
 	
 	/**
@@ -46,8 +44,8 @@ public class NetworkScreen extends Form {
 	 */
 	public NetworkScreen(String title, Item[] items) {
 		super(title, items);
-	}	
-
+	}
+	
 	/**
 	 * @return Returns the recPhoneNum.
 	 */
@@ -62,4 +60,4 @@ public class NetworkScreen extends Form {
 		return rPort;
 	}
 }
-// #endif
+//#endif

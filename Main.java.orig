@@ -1,6 +1,10 @@
 /*
 * Criação de um novo arquivo java.
-  Modificação p/ Prova - Ass: Guerreiro
+<<<<<<< HEAD
+  Modificação - Ass: Guerreiro
+=======
+Modificação em BRANCH GRUPO A - F. Guerreiro
+>>>>>>> 88882e69d3d00dc808de544e12bcd42739b367fd
 */
 public class Gestao{
 

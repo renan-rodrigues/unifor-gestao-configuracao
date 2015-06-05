@@ -43,9 +43,7 @@ public class NewLabelScreen extends Form {
 	 * @param arg1
 	 */
 	public NewLabelScreen(String title, Item[] items) {
-
 		super(title, items);
-		// TODO Auto-generated constructor stub
 	}	
 	
 	/**
