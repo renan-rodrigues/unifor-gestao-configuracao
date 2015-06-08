@@ -8,6 +8,8 @@ import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.List;
 
+import lancs.mobilemedia.core.ui.controller.AlbumController;
+
 
 /**
  * @author trevor
@@ -71,6 +73,11 @@ public class AlbumListScreen extends List {
 				this.append(albumNames[i], null);
 			}
 		}
+	}
+
+	public void setCommandListener(AlbumController albumController) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
