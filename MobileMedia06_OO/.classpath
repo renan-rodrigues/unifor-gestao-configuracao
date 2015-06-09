@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/jdk1.6.0_04/lib/tools.jar"/>
+	<classpathentry kind="lib" path="C:/user/research/MobileMedia/Antenna/antenna-bin-0.9.15-beta.jar"/>
+	<classpathentry kind="lib" path="C:/WTK2.5.1/lib/midpapi20.jar"/>
+	<classpathentry kind="lib" path="C:/WTK2.5.1/lib/wma20.jar"/>
+	<classpathentry kind="lib" path="C:/WTK2.5.1/lib/cldcapi10.jar"/>
+	<classpathentry kind="lib" path="C:/WTK2.5.1/lib/mmapi.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
