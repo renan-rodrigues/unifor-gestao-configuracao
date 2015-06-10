@@ -34,8 +34,6 @@ import lancs.mobilemedia.sms.SmsReceiverThread;
 //if they aren't used, otherwise it will throw exceptions trying to
 //load classes that aren't available for a given platform.
 
-// Comentario adicionado para visualizar no github as alteracoes
-// Renan Rodrigues
 
 /* 
  * @author trevor
