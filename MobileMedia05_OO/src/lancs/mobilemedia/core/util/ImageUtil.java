@@ -16,6 +16,12 @@ import lancs.mobilemedia.lib.exceptions.InvalidImageFormatException;
  *         Byte arrays are the main format for storing data in RMS, and for
  *         sending data over the wire.
  */
+
+/**
+* Primeira modificacao em uma classe do projeto
+* Renan Rodrigues
+*/
+
 public class ImageUtil {
 
 	// Delimiter used in record store data to separate fields in a string.

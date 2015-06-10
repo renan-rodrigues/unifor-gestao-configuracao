@@ -5,6 +5,11 @@
 package lancs.mobilemedia.core.util;
 
 /**
+* Outra modificacao na classe Contants
+* Renan Rodrigues
+*/
+
+/**
  * @author tyoung
  *
  * This class contains all constants used by the MobileMedia application.
